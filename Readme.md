@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Alina Mangusheva](https://up.htmlacademy.ru/ecmascript/20/user/1778677).
-* Наставник: `Неизвестно`.
+* Наставник: [Семён Якушев](https://htmlacademy.ru/profile/id1118791). 
 
 ---
 

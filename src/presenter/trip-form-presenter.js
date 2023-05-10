@@ -25,17 +25,17 @@ export default class TripFormPresenter {
     render(this.#routePointListComponent, this.#routePointListContainer);
 
 
-    render(new EditFormView({
-      destination: this.#destinationsModel.getById(this.#tripRoutePoints[0]),
-      routePoint: this.#tripRoutePoints[0],
-      offers: this.#offersModel.getByType(this.#tripRoutePoints[0]),
-    }), this.#routePointListComponent.element);
-
-    for (let i = 1; i < this.#tripRoutePoints.length; i++) {
+    for (let i = 0; i < this.#tripRoutePoints.length; i++) {
       const destination = this.#destinationsModel.getById(this.#tripRoutePoints[i]);
       const offers = this.#offersModel.getById(this.#tripRoutePoints[i]);
-      render(new RoutePointView({routePoint: this.#tripRoutePoints[i], destination: destination, offers: offers}), this.#routePointListComponent.element);
+      this.#renderRoutePoint(this.#tripRoutePoints[i], destination, offers);
     }
+  }
+
+  #renderRoutePoint(routePoint, destination, offers) {
+    const routePointComponent = new RoutePointView({routePoint, destination, offers});
+
+    render(routePointComponent, this.#routePointListComponent.element);
 
   }
 }

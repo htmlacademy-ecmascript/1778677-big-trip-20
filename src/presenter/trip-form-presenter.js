@@ -25,12 +25,12 @@ export default class TripFormPresenter {
       destination: this.destinationsModel.getById(this.tripRoutePoints[0]),
       routePoint: this.tripRoutePoints[0],
       offers: this.offersModel.getByType(this.tripRoutePoints[0]),
-    }), this.routePointListComponent.element());
+    }), this.routePointListComponent.element);
 
     for (let i = 1; i < this.tripRoutePoints.length; i++) {
       const destination = this.destinationsModel.getById(this.tripRoutePoints[i]);
       const offers = this.offersModel.getById(this.tripRoutePoints[i]);
-      render(new RoutePointView({routePoint: this.tripRoutePoints[i], destination: destination, offers: offers}), this.routePointListComponent.element());
+      render(new RoutePointView({routePoint: this.tripRoutePoints[i], destination: destination, offers: offers}), this.routePointListComponent.element);
     }
 
   }

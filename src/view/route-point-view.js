@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import {humanizeDate, getTimeDiff} from '../utils.js';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -62,27 +62,22 @@ function createRoutePointTemplate(routePoint, destination, offers) {
 </li>`;
 }
 
-export default class RoutePointView {
+export default class RoutePointView extends AbstractView {
+  #destination = null;
+  #routePoint = null;
+  #offers = null;
+
   constructor({routePoint, destination, offers}){
-    this.routePoint = routePoint;
-    this.destination = destination;
-    this.offers = offers;
+    super();
+    this.#routePoint = routePoint;
+    this.#destination = destination;
+    this.#offers = offers;
   }
 
-  getTemplate() {
-    return createRoutePointTemplate(this.routePoint, this.destination, this.offers);
+  get template() {
+    return createRoutePointTemplate(this.#routePoint, this.#destination, this.#offers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
 
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
 }
 

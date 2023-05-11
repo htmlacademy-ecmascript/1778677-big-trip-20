@@ -114,17 +114,24 @@ export default class EditFormView extends AbstractView {
   #destination = null;
   #routePoint = null;
   #offers = null;
+  #handleSubmit = null;
 
-  constructor({destination, routePoint = EMPTY_ROUTEPOINT, offers}) {
+  constructor({destination, routePoint = EMPTY_ROUTEPOINT, offers, onFormSubmit}) {
     super();
     this.#destination = destination;
     this.#routePoint = routePoint;
     this.#offers = offers;
+    this.#handleSubmit = onFormSubmit;
+    this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
   }
 
   get template() {
     return createEditFormTemplate(this.#routePoint, this.#destination, this.#offers);
   }
 
+  #submitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleSubmit();
+  };
 }
 

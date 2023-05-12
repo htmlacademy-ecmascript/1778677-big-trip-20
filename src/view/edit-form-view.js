@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { CITY_NAMES, TYPES, EMPTY_ROUTEPOINT } from '../const.js';
 import {humanizeDate, capitalize} from '../utils.js';
 
@@ -110,27 +110,28 @@ function createEditFormTemplate(routePoint, destination, offers) {
 <li>`;
 }
 
-export default class EditFormView {
-  constructor({destination, routePoint = EMPTY_ROUTEPOINT, offers}) {
-    this.destination = destination;
-    this.routePoint = routePoint;
-    this.offers = offers;
+export default class EditFormView extends AbstractView {
+  #destination = null;
+  #routePoint = null;
+  #offers = null;
+  #handleSubmit = null;
+
+  constructor({destination, routePoint = EMPTY_ROUTEPOINT, offers, onFormSubmit}) {
+    super();
+    this.#destination = destination;
+    this.#routePoint = routePoint;
+    this.#offers = offers;
+    this.#handleSubmit = onFormSubmit;
+    this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
   }
 
-  getTemplate() {
-    return createEditFormTemplate(this.routePoint, this.destination, this.offers);
+  get template() {
+    return createEditFormTemplate(this.#routePoint, this.#destination, this.#offers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #submitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleSubmit();
+  };
 }
 

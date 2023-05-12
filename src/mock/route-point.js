@@ -4,8 +4,8 @@ const mockRoutePoints = [
   {
     id: '1',
     basePrice: 1100,
-    dateFrom: new Date('2019-07-10T22:55:56.845Z'),
-    dateTo: new Date('2019-07-11T11:22:13.375Z'),
+    dateFrom: new Date('2025-07-10T22:55:56.845Z'),
+    dateTo: new Date('2025-07-11T11:22:13.375Z'),
     destination: mockDestinations[0].id,
     isFavorite: false,
     offers: ['1'],

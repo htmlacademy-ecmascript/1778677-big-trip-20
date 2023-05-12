@@ -35,4 +35,16 @@ function getTimeDiff(timeFrom, timeTo) {
   return routePointDuration;
 }
 
-export {humanizeDate, getTimeDiff};
+function isRoutePointFuture(routePoint){
+  return (dayjs().isBefore(routePoint.dateFrom));
+}
+
+function isRoutePointPast(routePoint){
+  return (dayjs().isAfter(routePoint.dateTo));
+}
+
+function isRoutePointPresent(routePoint){
+  return (dayjs().isAfter(routePoint.dateFrom) && dayjs().isBefore(routePoint.dateTo));
+}
+
+export {humanizeDate, getTimeDiff, isRoutePointFuture, isRoutePointPast, isRoutePointPresent};

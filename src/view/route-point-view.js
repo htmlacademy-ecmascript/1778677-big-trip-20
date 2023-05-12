@@ -1,5 +1,5 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {humanizeDate, getTimeDiff} from '../utils.js';
+import {humanizeDate, getTimeDiff} from '../utils/route-point-utils.js';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 const EVENT_DATE = 'MMM DD';

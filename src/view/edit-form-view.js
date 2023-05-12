@@ -1,6 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import { CITY_NAMES, TYPES, EMPTY_ROUTEPOINT } from '../const.js';
-import {humanizeDate, capitalize} from '../utils.js';
+import {humanizeDate} from '../utils/route-point-utils.js';
+import {capitalize} from '../utils/common.js';
 
 const DATE_FORMAT_IN_FORM = 'DD/MM/YY HH:mm';
 
@@ -39,7 +40,7 @@ function createEditFormTemplate(routePoint, destination, offers) {
        </div>`).join('');
   }
 
-  return `<li><form class="event event--edit" action="#" method="post">
+  return `<li class="trip-events__item"><form class="event event--edit" action="#" method="post">
   <header class="event__header">
     <div class="event__type-wrapper">
       <label class="event__type  event__type-btn" for="event-type-toggle-1">

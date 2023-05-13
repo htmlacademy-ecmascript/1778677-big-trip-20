@@ -23,5 +23,12 @@ const EMPTY_ROUTEPOINT = {
   type: 'taxi',
 };
 
-export {TYPES, CITY_NAMES, DESCRIPTIONS, OFFERS, EMPTY_ROUTEPOINT};
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PRESENT: 'present',
+  PAST: 'past',
+};
+
+export {TYPES, CITY_NAMES, DESCRIPTIONS, OFFERS, EMPTY_ROUTEPOINT, FilterType};
 

@@ -1,6 +1,7 @@
 import EditFormView from '../view/edit-form-view.js';
 import RoutePointView from '../view/route-point-view.js';
 import RoutePointListView from '../view/route-point-list-view.js';
+import NoRoutePointView from '../view/no-route-point-view.js';
 import {render, replace} from '../framework/render.js';
 
 
@@ -29,6 +30,11 @@ export default class TripFormPresenter {
 
   #renderRoutesPointList(){
     render(this.#routePointListComponent, this.#routePointListContainer);
+
+    if(this.#tripRoutePoints.length === 0){
+      render(new NoRoutePointView(), this.#routePointListComponent.element);
+      return;
+    }
 
     for (let i = 0; i < this.#tripRoutePoints.length; i++) {
       const destination = this.#destinationsModel.getById(this.#tripRoutePoints[i]);

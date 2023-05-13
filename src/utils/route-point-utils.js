@@ -35,12 +35,16 @@ function getTimeDiff(timeFrom, timeTo) {
   return routePointDuration;
 }
 
-function getRandomArrayElement(items) {
-  return items[Math.floor(Math.random() * items.length)];
+function isRoutePointFuture(routePoint){
+  return (dayjs().isBefore(routePoint.dateFrom));
 }
 
-function capitalize(string) {
-  return `${string[0].toUpperCase()}${string.slice(1)}`;
+function isRoutePointPast(routePoint){
+  return (dayjs().isAfter(routePoint.dateTo));
 }
 
-export {getRandomArrayElement, humanizeDate, capitalize, getTimeDiff};
+function isRoutePointPresent(routePoint){
+  return (dayjs().isAfter(routePoint.dateFrom) && dayjs().isBefore(routePoint.dateTo));
+}
+
+export {humanizeDate, getTimeDiff, isRoutePointFuture, isRoutePointPast, isRoutePointPresent};

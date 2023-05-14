@@ -18,6 +18,7 @@ export default class TripFormPresenter {
   #noRoutePointComponent = new NoRoutePointView();
 
   #tripRoutePoints = [];
+  #routePointsPresenters = new Map();
 
 
   constructor({bigTripContainer, routePointsModel, destinationsModel, offersModel}) {
@@ -57,7 +58,14 @@ export default class TripFormPresenter {
   #renderRoutePoint(routePoint, destination, offers, offersByType) {
     const routePointPresenter = new RoutePointPresenter({routePointListContainer: this.#routePointListComponent.element});
     routePointPresenter.init(routePoint, destination, offers, offersByType);
+    this.#routePointsPresenters.set(routePoint.id, routePointPresenter);
   }
+
+  #clearRoutePontList() {
+    this.#routePointsPresenters.forEach((presenter) => presenter.destroy());
+    this.#routePointsPresenters.clear();
+  }
+
 
   #renderBigTrip(){
     render(this.#bigTripComponent, this.#bigTripContainer);

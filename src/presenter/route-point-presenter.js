@@ -2,9 +2,15 @@ import {render, replace, remove} from '../framework/render.js';
 import RoutePointView from '../view/route-point-view.js';
 import EditFormView from '../view/edit-form-view.js';
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 export default class RoutePointPresenter {
   #routePointListContainer = null;
   #handleDataChange = null;
+  #handleModeChange = null;
 
   #routePointComponent = null;
   #editFormComponent = null;
@@ -13,10 +19,12 @@ export default class RoutePointPresenter {
   #destination = null;
   #offers = [];
   #offersByType = [];
+  #mode = Mode.DEFAULT;
 
-  constructor({routePointListContainer, onDataChange}) {
+  constructor({routePointListContainer, onDataChange, onModeChange}) {
     this.#routePointListContainer = routePointListContainer;
     this.#handleDataChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(routePoint, destination, offers, offersByType){
@@ -51,7 +59,7 @@ export default class RoutePointPresenter {
       replace(this.#routePointComponent, prevRoutePointComponent);
     }
 
-    if (this.#routePointListContainer.contains(prevEditFormComponent.element)) {
+    if (this.#mode === Mode.EDITING) {
       replace(this.#editFormComponent, prevEditFormComponent);
     }
 
@@ -64,12 +72,23 @@ export default class RoutePointPresenter {
     remove(this.#editFormComponent);
   }
 
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToRoutePoint();
+    }
+  }
+
   #replaceRoutePointToForm() {
     replace(this.#editFormComponent, this.#routePointComponent);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
+    this.#handleModeChange();
+    this.#mode = Mode.EDITING;
   }
 
   #replaceFormToRoutePoint() {
     replace(this.#routePointComponent, this.#editFormComponent);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    this.#mode = Mode.DEFAULT;
   }
 
   #escKeyDownHandler = (evt) => {
@@ -82,7 +101,6 @@ export default class RoutePointPresenter {
 
   #handleClick = () => {
     this.#replaceRoutePointToForm();
-    document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
   #handleFavoriteClick = () => {
@@ -92,7 +110,6 @@ export default class RoutePointPresenter {
   #handleFormSubmit = (routePoint, destination, offers, offersByType) =>{
     this.#handleDataChange(routePoint, destination, offers, offersByType);
     this.#replaceFormToRoutePoint();
-    document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
 

@@ -34,6 +34,10 @@ export default class TripFormPresenter {
     this.#renderBigTrip();
   }
 
+  #handleModeChange = () => {
+    this.#routePointsPresenters.forEach((presenter) => presenter.resetView());
+  };
+
   #handleRoutePointChange = (updatedRoutePoint, destination, offers, offersByType) => {
     this.#tripRoutePoints = updateItem(this.#tripRoutePoints, updatedRoutePoint);
     this.#routePointsPresenters.get(updatedRoutePoint.id).init(updatedRoutePoint, destination, offers, offersByType);
@@ -64,7 +68,9 @@ export default class TripFormPresenter {
   #renderRoutePoint(routePoint, destination, offers, offersByType) {
     const routePointPresenter = new RoutePointPresenter({
       routePointListContainer: this.#routePointListComponent.element,
-      onDataChange: this.#handleRoutePointChange});
+      onDataChange: this.#handleRoutePointChange,
+      onModeChange: this.#handleModeChange
+    });
     routePointPresenter.init(routePoint, destination, offers, offersByType);
     this.#routePointsPresenters.set(routePoint.id, routePointPresenter);
   }

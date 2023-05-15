@@ -4,6 +4,7 @@ import EditFormView from '../view/edit-form-view.js';
 
 export default class RoutePointPresenter {
   #routePointListContainer = null;
+  #handleDataChange = null;
 
   #routePointComponent = null;
   #editFormComponent = null;
@@ -13,8 +14,9 @@ export default class RoutePointPresenter {
   #offers = [];
   #offersByType = [];
 
-  constructor({routePointListContainer}) {
+  constructor({routePointListContainer, onDataChange}) {
     this.#routePointListContainer = routePointListContainer;
+    this.#handleDataChange = onDataChange;
   }
 
   init(routePoint, destination, offers, offersByType){
@@ -31,6 +33,7 @@ export default class RoutePointPresenter {
       destination: this.#destination,
       offers: this.#offers,
       onClick: this.#handleClick,
+      onFavoriteClick: this.#handleFavoriteClick
     });
 
     this.#editFormComponent = new EditFormView({
@@ -82,7 +85,12 @@ export default class RoutePointPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandler);
   };
 
-  #handleFormSubmit = () =>{
+  #handleFavoriteClick = () => {
+    this.#handleDataChange({...this.#routePoint, isFavorite: !this.#routePoint.isFavorite}, this.#destination, this.#offers, this.#offersByType);
+  };
+
+  #handleFormSubmit = (routePoint, destination, offers, offersByType) =>{
+    this.#handleDataChange(routePoint, destination, offers, offersByType);
     this.#replaceFormToRoutePoint();
     document.addEventListener('keydown', this.#escKeyDownHandler);
   };

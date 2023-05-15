@@ -4,6 +4,7 @@ import SortView from '../view/sort-view.js';
 import BigTripView from '../view/big-trip-view.js';
 import RoutePointPresenter from './route-point-presenter.js';
 import {render, RenderPosition} from '../framework/render.js';
+import { updateItem } from '../utils/common.js';
 
 
 export default class TripFormPresenter {
@@ -33,6 +34,11 @@ export default class TripFormPresenter {
     this.#renderBigTrip();
   }
 
+  #handleRoutePointChange = (updatedRoutePoint, destination, offers, offersByType) => {
+    this.#tripRoutePoints = updateItem(this.#tripRoutePoints, updatedRoutePoint);
+    this.#routePointsPresenters.get(updatedRoutePoint.id).init(updatedRoutePoint, destination, offers, offersByType);
+  };
+
   #renderSort() {
     render(this.#sortComponent, this.#bigTripComponent.element, RenderPosition.AFTERBEGIN);
   }
@@ -56,7 +62,9 @@ export default class TripFormPresenter {
   }
 
   #renderRoutePoint(routePoint, destination, offers, offersByType) {
-    const routePointPresenter = new RoutePointPresenter({routePointListContainer: this.#routePointListComponent.element});
+    const routePointPresenter = new RoutePointPresenter({
+      routePointListContainer: this.#routePointListComponent.element,
+      onDataChange: this.#handleRoutePointChange});
     routePointPresenter.init(routePoint, destination, offers, offersByType);
     this.#routePointsPresenters.set(routePoint.id, routePointPresenter);
   }

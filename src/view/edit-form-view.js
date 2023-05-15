@@ -116,6 +116,7 @@ export default class EditFormView extends AbstractView {
   #routePoint = null;
   #offers = null;
   #handleSubmit = null;
+  #handleFavoriteClick = null;
 
   constructor({destination, routePoint = EMPTY_ROUTEPOINT, offers, onFormSubmit}) {
     super();
@@ -132,7 +133,7 @@ export default class EditFormView extends AbstractView {
 
   #submitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleSubmit();
+    this.#handleSubmit(this.#routePoint, this.#destination, this.#offers);
   };
 }
 

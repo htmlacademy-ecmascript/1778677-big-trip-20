@@ -1,23 +1,29 @@
-import EditFormView from '../view/edit-form-view.js';
-import RoutePointView from '../view/route-point-view.js';
 import RoutePointListView from '../view/route-point-list-view.js';
 import NoRoutePointView from '../view/no-route-point-view.js';
-import {render, replace} from '../framework/render.js';
+import SortView from '../view/sort-view.js';
+import BigTripView from '../view/big-trip-view.js';
+import RoutePointPresenter from './route-point-presenter.js';
+import {render, RenderPosition} from '../framework/render.js';
+import { updateItem } from '../utils/common.js';
 
 
 export default class TripFormPresenter {
+  #bigTripComponent = new BigTripView();
+  #bigTripContainer = null;
   #routePointsModel = null;
   #destinationsModel = null;
   #offersModel = null;
-  #routePointListContainer = null;
 
   #routePointListComponent = new RoutePointListView();
+  #sortComponent = new SortView();
+  #noRoutePointComponent = new NoRoutePointView();
 
   #tripRoutePoints = [];
+  #routePointsPresenters = new Map();
 
 
-  constructor({routePointListContainer, routePointsModel, destinationsModel, offersModel}) {
-    this.#routePointListContainer = routePointListContainer;
+  constructor({bigTripContainer, routePointsModel, destinationsModel, offersModel}) {
+    this.#bigTripContainer = bigTripContainer;
     this.#routePointsModel = routePointsModel;
     this.#destinationsModel = destinationsModel;
     this.#offersModel = offersModel;
@@ -25,17 +31,32 @@ export default class TripFormPresenter {
 
   init() {
     this.#tripRoutePoints = [...this.#routePointsModel.routePoints];
-    this.#renderRoutesPointList();
+    this.#renderBigTrip();
   }
 
-  #renderRoutesPointList(){
-    render(this.#routePointListComponent, this.#routePointListContainer);
+  #handleModeChange = () => {
+    this.#routePointsPresenters.forEach((presenter) => presenter.resetView());
+  };
 
-    if(this.#tripRoutePoints.length === 0){
-      render(new NoRoutePointView(), this.#routePointListComponent.element);
-      return;
-    }
+  #handleRoutePointChange = (updatedRoutePoint, destination, offers, offersByType) => {
+    this.#tripRoutePoints = updateItem(this.#tripRoutePoints, updatedRoutePoint);
+    this.#routePointsPresenters.get(updatedRoutePoint.id).init(updatedRoutePoint, destination, offers, offersByType);
+  };
 
+  #renderSort() {
+    render(this.#sortComponent, this.#bigTripComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderNoRoutePoints() {
+    render(this.#noRoutePointComponent, this.#bigTripComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderRoutesPointList() {
+    render(this.#routePointListComponent, this.#bigTripContainer);
+    this.#renderRoutePoints();
+  }
+
+  #renderRoutePoints(){
     for (let i = 0; i < this.#tripRoutePoints.length; i++) {
       const destination = this.#destinationsModel.getById(this.#tripRoutePoints[i]);
       const offers = this.#offersModel.getById(this.#tripRoutePoints[i]);
@@ -45,27 +66,29 @@ export default class TripFormPresenter {
   }
 
   #renderRoutePoint(routePoint, destination, offers, offersByType) {
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === 'Escape') {
-        evt.preventDefault();
-        replaceFormToRoutePoint();
-        document.removeEventListener('keydown', escKeyDownHandler);
-      }
-    };
-    const routePointComponent = new RoutePointView({routePoint, destination, offers, onClick: () => {
-      replaceRoutePointToForm(); document.addEventListener('keydown', escKeyDownHandler);
-    } });
-    const editFormViewComponent = new EditFormView({destination, routePoint, offers: offersByType, onFormSubmit: () => {
-      replaceFormToRoutePoint(); document.addEventListener('keydown', escKeyDownHandler);
-    } });
-    render(routePointComponent, this.#routePointListComponent.element);
+    const routePointPresenter = new RoutePointPresenter({
+      routePointListContainer: this.#routePointListComponent.element,
+      onDataChange: this.#handleRoutePointChange,
+      onModeChange: this.#handleModeChange
+    });
+    routePointPresenter.init(routePoint, destination, offers, offersByType);
+    this.#routePointsPresenters.set(routePoint.id, routePointPresenter);
+  }
 
-    function replaceRoutePointToForm () {
-      replace(editFormViewComponent, routePointComponent);
+  #clearRoutePontList() {
+    this.#routePointsPresenters.forEach((presenter) => presenter.destroy());
+    this.#routePointsPresenters.clear();
+  }
+
+
+  #renderBigTrip(){
+    render(this.#bigTripComponent, this.#bigTripContainer);
+    if (this.#tripRoutePoints.length === 0) {
+      this.#renderNoRoutePoints();
+      return;
     }
-    function replaceFormToRoutePoint(){
-      replace(routePointComponent, editFormViewComponent);
-    }
+    this.#renderSort();
+    this.#renderRoutesPointList();
   }
 
 }

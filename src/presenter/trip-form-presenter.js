@@ -5,7 +5,8 @@ import BigTripView from '../view/big-trip-view.js';
 import RoutePointPresenter from './route-point-presenter.js';
 import {render, RenderPosition} from '../framework/render.js';
 import { updateItem } from '../utils/common.js';
-
+import { sortByDay, sortByDurationTime, sortByPrice } from '../utils/route-point-utils.js';
+import {SortType} from '../const.js';
 
 export default class TripFormPresenter {
   #bigTripComponent = new BigTripView();
@@ -15,11 +16,13 @@ export default class TripFormPresenter {
   #offersModel = null;
 
   #routePointListComponent = new RoutePointListView();
-  #sortComponent = new SortView();
+  #sortComponent = null;
   #noRoutePointComponent = new NoRoutePointView();
 
   #tripRoutePoints = [];
   #routePointsPresenters = new Map();
+  #currentSortType = SortType.DEFAULT;
+  #sourcedRoutePoints = [];
 
 
   constructor({bigTripContainer, routePointsModel, destinationsModel, offersModel}) {
@@ -30,7 +33,8 @@ export default class TripFormPresenter {
   }
 
   init() {
-    this.#tripRoutePoints = [...this.#routePointsModel.routePoints];
+    this.#tripRoutePoints = [...this.#routePointsModel.routePoints].sort(sortByDay);
+    this.#sourcedRoutePoints = [...this.#routePointsModel.routePoints].sort(sortByDay);
     this.#renderBigTrip();
   }
 
@@ -40,10 +44,41 @@ export default class TripFormPresenter {
 
   #handleRoutePointChange = (updatedRoutePoint, destination, offers, offersByType) => {
     this.#tripRoutePoints = updateItem(this.#tripRoutePoints, updatedRoutePoint);
+    this.#sourcedRoutePoints = updateItem(this.#sourcedRoutePoints, updatedRoutePoint);
     this.#routePointsPresenters.get(updatedRoutePoint.id).init(updatedRoutePoint, destination, offers, offersByType);
   };
 
+  #sortRoutePoints(sortType) {
+    switch (sortType) {
+      case SortType.DURATION_TIME:
+        this.#tripRoutePoints.sort(sortByDurationTime);
+        break;
+      case SortType.PRICE:
+        this.#tripRoutePoints.sort(sortByPrice);
+        break;
+      case SortType.DEFAULT:
+        this.#tripRoutePoints.sort(sortByDay);
+        break;
+      default:
+        this.#tripRoutePoints = [...this.#sourcedRoutePoints];
+    }
+
+    this.#currentSortType = sortType;
+  }
+
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#sortRoutePoints(sortType);
+    this.#clearRoutesPointList();
+    this.#renderRoutesPointList();
+  };
+
   #renderSort() {
+    this.#sortComponent = new SortView({
+      onSortTypeChange: this.#handleSortTypeChange
+    });
     render(this.#sortComponent, this.#bigTripComponent.element, RenderPosition.AFTERBEGIN);
   }
 
@@ -75,7 +110,7 @@ export default class TripFormPresenter {
     this.#routePointsPresenters.set(routePoint.id, routePointPresenter);
   }
 
-  #clearRoutePontList() {
+  #clearRoutesPointList() {
     this.#routePointsPresenters.forEach((presenter) => presenter.destroy());
     this.#routePointsPresenters.clear();
   }

@@ -30,5 +30,11 @@ const FilterType = {
   PAST: 'past',
 };
 
-export {TYPES, CITY_NAMES, DESCRIPTIONS, OFFERS, EMPTY_ROUTEPOINT, FilterType};
+const SortType = {
+  DEFAULT: 'day',
+  DURATION_TIME: 'time',
+  PRICE: 'price',
+};
+
+export {TYPES, CITY_NAMES, DESCRIPTIONS, OFFERS, EMPTY_ROUTEPOINT, FilterType, SortType};
 

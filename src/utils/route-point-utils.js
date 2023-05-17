@@ -34,6 +34,7 @@ function getTimeDiff(timeFrom, timeTo) {
 
   return routePointDuration;
 }
+const getDatesDiff = (dateFrom, dateTo, timeUnit) => timeUnit ? dayjs(dateTo).diff(dayjs(dateFrom), timeUnit) : dayjs(dateTo).diff(dayjs(dateFrom));
 
 function isRoutePointFuture(routePoint){
   return (dayjs().isBefore(routePoint.dateFrom));
@@ -47,4 +48,17 @@ function isRoutePointPresent(routePoint){
   return (dayjs().isAfter(routePoint.dateFrom) && dayjs().isBefore(routePoint.dateTo));
 }
 
-export {humanizeDate, getTimeDiff, isRoutePointFuture, isRoutePointPast, isRoutePointPresent};
+const sortByDay = (routePointA, routePointB) => {
+  const dateA = dayjs(routePointA.dateFrom);
+  const dateB = dayjs(routePointB.dateFrom);
+  if (dateA.isSame(dateB, 'D')) {
+    return 0;
+  }
+  return dateA.isAfter(dateB, 'D') ? 1 : -1;
+};
+
+const sortByDurationTime = (routePointA, routePointB) => getDatesDiff(routePointB.dateFrom, routePointB.dateTo) - getDatesDiff(routePointA.dateFrom, routePointA.dateTo);
+
+const sortByPrice = (routePointA, routePointB) => routePointB.basePrice - routePointA.basePrice;
+
+export {humanizeDate, getTimeDiff, isRoutePointFuture, isRoutePointPast, isRoutePointPresent, sortByDay, sortByDurationTime, sortByPrice};

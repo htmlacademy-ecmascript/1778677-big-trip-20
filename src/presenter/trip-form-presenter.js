@@ -42,10 +42,10 @@ export default class TripFormPresenter {
     this.#routePointsPresenters.forEach((presenter) => presenter.resetView());
   };
 
-  #handleRoutePointChange = (updatedRoutePoint, destination, offers, offersByType) => {
+  #handleRoutePointChange = (updatedRoutePoint) => {
     this.#tripRoutePoints = updateItem(this.#tripRoutePoints, updatedRoutePoint);
     this.#sourcedRoutePoints = updateItem(this.#sourcedRoutePoints, updatedRoutePoint);
-    this.#routePointsPresenters.get(updatedRoutePoint.id).init(updatedRoutePoint, destination, offers, offersByType);
+    this.#routePointsPresenters.get(updatedRoutePoint.id).init(updatedRoutePoint);
   };
 
   #sortRoutePoints(sortType) {
@@ -93,20 +93,23 @@ export default class TripFormPresenter {
 
   #renderRoutePoints(){
     for (let i = 0; i < this.#tripRoutePoints.length; i++) {
-      const destination = this.#destinationsModel.getById(this.#tripRoutePoints[i]);
-      const offers = this.#offersModel.getById(this.#tripRoutePoints[i]);
-      const offersByType = this.#offersModel.getByType(this.#tripRoutePoints[i]);
-      this.#renderRoutePoint(this.#tripRoutePoints[i], destination, offers, offersByType);
+      // const destination = this.#destinationsModel.getById(this.#tripRoutePoints[i]);
+      // const offers = this.#offersModel.getById(this.#tripRoutePoints[i]);
+      // const offersByType = this.#offersModel.getByType(this.#tripRoutePoints[i]);
+      this.#renderRoutePoint(this.#tripRoutePoints[i]);
     }
   }
 
-  #renderRoutePoint(routePoint, destination, offers, offersByType) {
+  #renderRoutePoint(routePoint) {
     const routePointPresenter = new RoutePointPresenter({
       routePointListContainer: this.#routePointListComponent.element,
+      destinationsModel: this.#destinationsModel,
+      routePointsModel: this.#routePointsModel,
+      offersModel: this.#offersModel,
       onDataChange: this.#handleRoutePointChange,
       onModeChange: this.#handleModeChange
     });
-    routePointPresenter.init(routePoint, destination, offers, offersByType);
+    routePointPresenter.init(routePoint);
     this.#routePointsPresenters.set(routePoint.id, routePointPresenter);
   }
 

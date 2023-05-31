@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { CITY_NAMES, TYPES, EMPTY_ROUTEPOINT } from '../const.js';
 import {humanizeDate} from '../utils/route-point-utils.js';
 import {capitalize} from '../utils/common.js';
@@ -31,7 +31,7 @@ function createEditFormTemplate(routePoint, destination, offers) {
   function createOfferTemplate(offersList) {
     return offersList.map((offer) =>
       `<div class="event__offer-selector">
-         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${routePoint.offers.includes(offer.id) ? 'checked' : ''}>
+         <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${offer.id}" type="checkbox" value="${offer.id}" name="event-offer-${type}" ${routePoint.offers.includes(offer.id) ? 'checked' : ''}>
          <label class="event__offer-label" for="event-offer-${type}-${offer.id}">
            <span class="event__offer-title">${offer.title}</span>
            &plus;&euro;&nbsp;
@@ -111,29 +111,76 @@ function createEditFormTemplate(routePoint, destination, offers) {
 <li>`;
 }
 
-export default class EditFormView extends AbstractView {
-  #destination = null;
-  #routePoint = null;
-  #offers = null;
+export default class EditFormView extends AbstractStatefulView {
+  #destinationsModel = null;
+  #offersModel = null;
   #handleSubmit = null;
   #handleFavoriteClick = null;
 
-  constructor({destination, routePoint = EMPTY_ROUTEPOINT, offers, onFormSubmit}) {
+  constructor({destinationsModel, routePoint = EMPTY_ROUTEPOINT, offersModel, onFormSubmit}) {
     super();
-    this.#destination = destination;
-    this.#routePoint = routePoint;
-    this.#offers = offers;
+    this.#destinationsModel = destinationsModel;
+    this._setState(EditFormView.parseRoutePointToState(routePoint));
+    this.#offersModel = offersModel;
     this.#handleSubmit = onFormSubmit;
-    this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
+
+    this._restoreHandlers();
   }
 
   get template() {
-    return createEditFormTemplate(this.#routePoint, this.#destination, this.#offers);
+    return createEditFormTemplate(this._state, this.#destinationsModel.getById(this._state), this.#offersModel.getByType(this._state));
   }
+
+  reset(routePoint) {
+    this.updateElement(
+      EditFormView.parseRoutePointToState(routePoint),
+    );
+  }
+
+  _restoreHandlers() {
+    this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerSelectHandler);
+  }
+
+  #typeChangeHandler = (evt) => {
+    this.updateElement({
+      type: evt.target.value,
+      offers: this.#offersModel.offers,
+    });
+  };
+
+  #destinationChangeHandler = (evt) => {
+    this.updateElement({
+      destination: this.#destinationsModel.getByName(evt.target.value).id,
+    });
+  };
+
+  #offerSelectHandler = (evt) => {
+    const selectedOffer = evt.target.value;
+    if (evt.target.checked) {
+      this.updateElement({
+        offers: [...this._state.offers, selectedOffer],
+      });
+    } else {
+      this.updateElement({
+        offers: [...this._state.offers.filter((offer) => offer !== selectedOffer)],
+      });
+    }
+  };
 
   #submitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleSubmit(this.#routePoint, this.#destination, this.#offers);
+    this.#handleSubmit(EditFormView.parseStateToRoutePoint(this._state), this.#destinationsModel.getById(this._state), this.#offersModel.getByType(this._state));
   };
+
+  static parseRoutePointToState(state) {
+    return {...state};
+  }
+
+  static parseStateToRoutePoint(routePoint) {
+    return {...routePoint};
+  }
 }
 

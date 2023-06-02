@@ -15,4 +15,8 @@ export default class OffersModel {
     return this.getByType(routePoint).filter((offer) => routePoint.offers.includes(offer.id));
   }
 
+  getTypes(){
+    return this.#offers.map((item) => item.type);
+  }
+
 }

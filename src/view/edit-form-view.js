@@ -1,11 +1,11 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { CITY_NAMES, TYPES, EMPTY_ROUTEPOINT } from '../const.js';
+import { EMPTY_ROUTEPOINT } from '../const.js';
 import {humanizeDate} from '../utils/route-point-utils.js';
 import {capitalize} from '../utils/common.js';
 
 const DATE_FORMAT_IN_FORM = 'DD/MM/YY HH:mm';
 
-function createEditFormTemplate(routePoint, destination, offers) {
+function createEditFormTemplate(routePoint, destination, offers, cityNames, offersTypes) {
   const {dateFrom, dateTo, type, basePrice} = routePoint;
 
   const startTimeInForm = humanizeDate(dateFrom, DATE_FORMAT_IN_FORM);
@@ -52,7 +52,7 @@ function createEditFormTemplate(routePoint, destination, offers) {
       <div class="event__type-list">
         <fieldset class="event__type-group">
           <legend class="visually-hidden">Event type</legend>
-          ${createEventTypeTemplate(TYPES)}
+          ${createEventTypeTemplate(offersTypes)}
 
         </fieldset>
       </div>
@@ -62,9 +62,9 @@ function createEditFormTemplate(routePoint, destination, offers) {
       <label class="event__label  event__type-output" for="event-destination-1">
         ${capitalize(type)}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${destination.name} list="destination-list-1">
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination ? destination.name : ''}" list="destination-list-1">
       <datalist id="destination-list-1">
-      ${createCityListTemplate(CITY_NAMES)}
+      ${createCityListTemplate(cityNames)}
       </datalist>
     </div>
 
@@ -98,11 +98,11 @@ function createEditFormTemplate(routePoint, destination, offers) {
 
     <section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${destination.description}</p>
+      <p class="event__destination-description">${destination ? destination.description : ''}</p>
 
       <div class="event__photos-container">
         <div class="event__photos-tape">
-        ${createPictureTemplate(destination.pictures)}
+        ${destination ? createPictureTemplate(destination.pictures) : ''}
         </div>
       </div>
     </section>
@@ -128,7 +128,7 @@ export default class EditFormView extends AbstractStatefulView {
   }
 
   get template() {
-    return createEditFormTemplate(this._state, this.#destinationsModel.getById(this._state), this.#offersModel.getByType(this._state));
+    return createEditFormTemplate(this._state, this.#destinationsModel.getById(this._state), this.#offersModel.getByType(this._state), this.#destinationsModel.getCityNames(), this.#offersModel.getTypes());
   }
 
   reset(routePoint) {
@@ -147,13 +147,13 @@ export default class EditFormView extends AbstractStatefulView {
   #typeChangeHandler = (evt) => {
     this.updateElement({
       type: evt.target.value,
-      offers: this.#offersModel.offers,
+      offers: this.#offersModel ? this.#offersModel.offers : '',
     });
   };
 
   #destinationChangeHandler = (evt) => {
     this.updateElement({
-      destination: this.#destinationsModel.getByName(evt.target.value).id,
+      destination: this.#destinationsModel.getByName(evt.target.value) ? this.#destinationsModel.getByName(evt.target.value).id : '',
     });
   };
 

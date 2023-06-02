@@ -16,4 +16,8 @@ export default class DestinationsModel {
     return this.#destinations.find((item) => item.name === name);
   }
 
+  getCityNames(){
+    return this.#destinations.map((item) => item.name);
+  }
+
 }

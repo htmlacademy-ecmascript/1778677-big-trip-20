@@ -93,9 +93,6 @@ export default class TripFormPresenter {
 
   #renderRoutePoints(){
     for (let i = 0; i < this.#tripRoutePoints.length; i++) {
-      // const destination = this.#destinationsModel.getById(this.#tripRoutePoints[i]);
-      // const offers = this.#offersModel.getById(this.#tripRoutePoints[i]);
-      // const offersByType = this.#offersModel.getByType(this.#tripRoutePoints[i]);
       this.#renderRoutePoint(this.#tripRoutePoints[i]);
     }
   }

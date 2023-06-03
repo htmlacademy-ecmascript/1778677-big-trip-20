@@ -9,7 +9,15 @@ export default class DestinationsModel {
   }
 
   getById(routePoint) {
-    return this.#destinations.find((destination) => destination.id === routePoint.id);
+    return this.#destinations.find((destination) => destination.id === routePoint.destination);
+  }
+
+  getByName(name) {
+    return this.#destinations.find((item) => item.name === name);
+  }
+
+  getCityNames(){
+    return this.#destinations.map((item) => item.name);
   }
 
 }

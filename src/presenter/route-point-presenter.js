@@ -15,23 +15,29 @@ export default class RoutePointPresenter {
   #routePointComponent = null;
   #editFormComponent = null;
 
+  #destinationsModel = null;
+  #routePointsModel = null;
+  #offersModel = null;
   #routePoint = null;
   #destination = null;
   #offers = [];
   #offersByType = [];
   #mode = Mode.DEFAULT;
 
-  constructor({routePointListContainer, onDataChange, onModeChange}) {
+  constructor({routePointListContainer, destinationsModel, routePointsModel, offersModel, onDataChange, onModeChange}) {
     this.#routePointListContainer = routePointListContainer;
+    this.#destinationsModel = destinationsModel;
+    this.#routePointsModel = routePointsModel;
+    this.#offersModel = offersModel;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
 
-  init(routePoint, destination, offers, offersByType){
+  init(routePoint){
     this.#routePoint = routePoint;
-    this.#destination = destination;
-    this.#offers = offers;
-    this.#offersByType = offersByType;
+    this.#destination = this.#destinationsModel.getById(this.#routePoint);
+    this.#offers = this.#offersModel.getById(this.#routePoint);
+    this.#offersByType = this.#offersModel.getByType(this.#routePoint);
 
     const prevRoutePointComponent = this.#routePointComponent;
     const prevEditFormComponent = this.#editFormComponent;
@@ -45,9 +51,9 @@ export default class RoutePointPresenter {
     });
 
     this.#editFormComponent = new EditFormView({
-      destination: this.#destination,
+      destinationsModel: this.#destinationsModel,
       routePoint: this.#routePoint,
-      offers: this.#offersByType,
+      offersModel: this.#offersModel,
       onFormSubmit: this.#handleFormSubmit});
 
     if (prevRoutePointComponent === null || prevEditFormComponent === null) {
@@ -74,6 +80,7 @@ export default class RoutePointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#editFormComponent.reset(this.#routePoint);
       this.#replaceFormToRoutePoint();
     }
   }
@@ -94,6 +101,7 @@ export default class RoutePointPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape') {
       evt.preventDefault();
+      this.#editFormComponent.reset(this.#routePoint);
       this.#replaceFormToRoutePoint();
       document.removeEventListener('keydown', this.#escKeyDownHandler);
     }

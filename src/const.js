@@ -36,5 +36,17 @@ const SortType = {
   PRICE: 'price',
 };
 
-export {TYPES, CITY_NAMES, DESCRIPTIONS, OFFERS, EMPTY_ROUTEPOINT, FilterType, SortType};
+const UserAction = {
+  UPDATE_ROUTEPOINT: 'UPDATE_ROUTEPOINT',
+  ADD_ROUTEPOINT: 'ADD_ROUTEPOINT',
+  DELETE_ROUTEPOINT: 'DELETE_ROUTEPOINT',
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+export {TYPES, CITY_NAMES, DESCRIPTIONS, OFFERS, EMPTY_ROUTEPOINT, FilterType, SortType, UserAction, UpdateType};
 

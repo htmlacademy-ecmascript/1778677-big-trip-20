@@ -1,6 +1,7 @@
 import {render, replace, remove} from '../framework/render.js';
 import RoutePointView from '../view/route-point-view.js';
 import EditFormView from '../view/edit-form-view.js';
+import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -54,7 +55,8 @@ export default class RoutePointPresenter {
       destinationsModel: this.#destinationsModel,
       routePoint: this.#routePoint,
       offersModel: this.#offersModel,
-      onFormSubmit: this.#handleFormSubmit});
+      onFormSubmit: this.#handleFormSubmit,
+      onDeleteClick: this.#handleDeleteClick});
 
     if (prevRoutePointComponent === null || prevEditFormComponent === null) {
       render(this.#routePointComponent, this.#routePointListContainer);
@@ -112,12 +114,26 @@ export default class RoutePointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({...this.#routePoint, isFavorite: !this.#routePoint.isFavorite}, this.#destination, this.#offers, this.#offersByType);
+    this.#handleDataChange(
+      UserAction.UPDATE_ROUTEPOINT,
+      UpdateType.MINOR,
+      {...this.#routePoint, isFavorite: !this.#routePoint.isFavorite}, this.#destination, this.#offers, this.#offersByType);
   };
 
-  #handleFormSubmit = (routePoint, destination, offers, offersByType) =>{
-    this.#handleDataChange(routePoint, destination, offers, offersByType);
+  #handleFormSubmit = (update, destination, offers, offersByType) =>{
+    this.#handleDataChange(
+      UserAction.UPDATE_ROUTEPOINT,
+      UpdateType.MINOR,
+      update, destination, offers, offersByType);
     this.#replaceFormToRoutePoint();
+  };
+
+  #handleDeleteClick = (routePoint) => {
+    this.#handleDataChange(
+      UserAction.DELETE_ROUTEPOINT,
+      UpdateType.MINOR,
+      routePoint
+    );
   };
 
 

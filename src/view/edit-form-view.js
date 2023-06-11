@@ -65,7 +65,7 @@ function createEditFormTemplate(routePoint, destination, offers, cityNames, offe
       <label class="event__label  event__type-output" for="event-destination-1">
         ${capitalize(type)}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" autocomplete="off"  type="text" name="event-destination" value="${destination ? destination.name : ''}" list="destination-list-1">
+      <input class="event__input  event__input--destination" id="event-destination-1" autocomplete="off"  type="text" name="event-destination" value="${destination ? destination.name : ''}" list="destination-list-1"/>
       <datalist id="destination-list-1">
       ${createCityListTemplate(cityNames)}
       </datalist>
@@ -82,9 +82,9 @@ function createEditFormTemplate(routePoint, destination, offers, cityNames, offe
     <div class="event__field-group  event__field-group--price">
       <label class="event__label" for="event-price-1">
         <span class="visually-hidden">Price</span>
-        € ${he.encode(`${basePrice}`)}
+        €
       </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="">
+      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${he.encode(`${basePrice}`)}">
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -198,6 +198,7 @@ export default class EditFormView extends AbstractStatefulView {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerSelectHandler);
+    this.element.querySelector('.event__field-group--price').addEventListener('change', this.#basePriceChangeHandler);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formDeleteClickHandler);
 
@@ -214,6 +215,12 @@ export default class EditFormView extends AbstractStatefulView {
   #destinationChangeHandler = (evt) => {
     this.updateElement({
       destination: this.#destinationsModel.getByName(evt.target.value) ? this.#destinationsModel.getByName(evt.target.value).id : '',
+    });
+  };
+
+  #basePriceChangeHandler = (evt) => {
+    this.updateElement({
+      basePrice: evt.target.value,
     });
   };
 

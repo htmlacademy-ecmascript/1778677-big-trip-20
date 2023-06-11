@@ -2,6 +2,7 @@ import {remove, render, RenderPosition} from '../framework/render.js';
 import EditFormView from '../view/edit-form-view.js';
 import {nanoid} from 'nanoid';
 import {UserAction, UpdateType} from '../const.js';
+import RoutePointsModel from '../model/route-points-model.js';
 
 export default class NewRoutePointPresenter {
   #routePointListContainer = null;
@@ -51,14 +52,15 @@ export default class NewRoutePointPresenter {
   }
 
   #handleFormSubmit = (routePoint) => {
-    this.#handleDataChange(
-      UserAction.ADD_ROUTEPOINT,
-      UpdateType.MINOR,
-      // Пока у нас нет сервера, который бы после сохранения
-      // выдывал честный id задачи, нам нужно позаботиться об этом самим
-      {id: nanoid(), ...routePoint},
-    );
+    if(RoutePointsModel.isNotEmpty(routePoint)){
+      this.#handleDataChange(
+        UserAction.ADD_ROUTEPOINT,
+        UpdateType.MINOR,
+        {id: nanoid(), ...routePoint},
+      );
+    }
     this.destroy();
+
   };
 
   #handleDeleteClick = () => {

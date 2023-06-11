@@ -47,5 +47,10 @@ export default class RoutePointsModel extends Observable{
 
     this._notify(updateType);
   }
+
+  static isNotEmpty(routePoint){
+    return routePoint.basePrice && routePoint.dateFrom && routePoint.dateTo && routePoint.destination;
+
+  }
 }
 

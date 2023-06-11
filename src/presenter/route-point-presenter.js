@@ -2,6 +2,7 @@ import {render, replace, remove} from '../framework/render.js';
 import RoutePointView from '../view/route-point-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import {UserAction, UpdateType} from '../const.js';
+import RoutePointsModel from '../model/route-points-model.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -121,10 +122,12 @@ export default class RoutePointPresenter {
   };
 
   #handleFormSubmit = (update, destination, offers, offersByType) =>{
-    this.#handleDataChange(
-      UserAction.UPDATE_ROUTEPOINT,
-      UpdateType.MINOR,
-      update, destination, offers, offersByType);
+    if(RoutePointsModel.isNotEmpty(update)){
+      this.#handleDataChange(
+        UserAction.UPDATE_ROUTEPOINT,
+        UpdateType.MINOR,
+        update, destination, offers, offersByType);
+    }
     this.#replaceFormToRoutePoint();
   };
 

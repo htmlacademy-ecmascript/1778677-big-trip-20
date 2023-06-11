@@ -1,5 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {humanizeDate, getTimeDiff} from '../utils/route-point-utils.js';
+import he from 'he';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 const EVENT_DATE = 'MMM DD';
@@ -43,7 +44,7 @@ function createRoutePointTemplate(routePoint, destination, offers) {
       <p class="event__duration">${durationTime}</p>
     </div>
     <p class="event__price">
-      €&nbsp;<span class="event__price-value">${basePrice}</span>
+      €&nbsp; <span class="event__price-value"> ${he.encode(`${basePrice}`)}</span>
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">

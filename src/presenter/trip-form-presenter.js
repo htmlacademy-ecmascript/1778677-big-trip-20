@@ -2,6 +2,7 @@ import RoutePointListView from '../view/route-point-list-view.js';
 import NoRoutePointView from '../view/no-route-point-view.js';
 import SortView from '../view/sort-view.js';
 import BigTripView from '../view/big-trip-view.js';
+import LoadingView from '../view/loading-view.js';
 import RoutePointPresenter from './route-point-presenter.js';
 import NewRoutePointPresenter from './new-route-point-presenter.js';
 import {render, RenderPosition, remove} from '../framework/render.js';
@@ -18,6 +19,7 @@ export default class TripFormPresenter {
   #filterModel = null;
 
   #routePointListComponent = new RoutePointListView();
+  #loadingComponent = new LoadingView();
   #sortComponent = null;
   #noRoutePointComponent = null;
 
@@ -25,6 +27,7 @@ export default class TripFormPresenter {
   #newRoutePointPresenter = null;
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.EVERYTHING;
+  #isLoading = true;
 
   constructor({bigTripContainer, routePointsModel, destinationsModel, offersModel, filterModel, onNewRoutePointDestroy}) {
     this.#bigTripContainer = bigTripContainer;
@@ -102,6 +105,11 @@ export default class TripFormPresenter {
         this.#clearTripForm({resetSortType: true});
         this.#renderBigTrip();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderBigTrip();
+        break;
     }
   };
 
@@ -122,6 +130,10 @@ export default class TripFormPresenter {
     render(this.#sortComponent, this.#bigTripComponent.element, RenderPosition.AFTERBEGIN);
   }
 
+  #renderLoading() {
+    render(this.#loadingComponent, this.#bigTripComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
   #renderNoRoutePoints() {
     this.#noRoutePointComponent = new NoRoutePointView({
       filterType: this.#filterType
@@ -136,6 +148,8 @@ export default class TripFormPresenter {
     this.#routePointsPresenters.clear();
 
     remove(this.#sortComponent);
+    remove(this.#loadingComponent);
+
     if (this.#noRoutePointComponent) {
       remove(this.#noRoutePointComponent);
     }
@@ -164,6 +178,10 @@ export default class TripFormPresenter {
 
   #renderBigTrip(){
     render(this.#bigTripComponent, this.#bigTripContainer);
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
     if (this.routePoints.length === 0) {
       this.#renderNoRoutePoints();
       return;

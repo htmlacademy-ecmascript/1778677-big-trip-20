@@ -18,14 +18,13 @@ function createRoutePointTemplate(routePoint, destination, offers) {
   const durationTime = getTimeDiff(dateFrom, dateTo);
 
   function createOfferTemplate(offersList) {
-    if(offersList){
-      return offersList.map((offer) =>
-        `<li class="event__offer">
+    return offersList.map((offer) =>
+      `<li class="event__offer">
             <span class="event__offer-title">${offer.title}</span>
             &plus;&euro;&nbsp;
             <span class="event__offer-price">${offer.price}</span>
           </li>`).join('');
-    }
+
   }
 
   const getFavoriteButton = () => isFavorite ? 'active' : '';
@@ -50,7 +49,7 @@ function createRoutePointTemplate(routePoint, destination, offers) {
     </p>
     <h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
-    ${createOfferTemplate(offers)}
+    ${offers ? createOfferTemplate(offers) : ''}
     </ul>
     <button class="event__favorite-btn event__favorite-btn--${getFavoriteButton()}" type="button">
       <span class="visually-hidden">Add to favorite</span>

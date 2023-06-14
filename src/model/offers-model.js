@@ -15,11 +15,15 @@ export default class OffersModel extends Observable{
   }
 
   getByType(routePoint) {
-    return this.#offers.find((offer) => offer.type === routePoint.type).offers;
+    if(this.#offers.length !== 0){
+      return this.#offers.find((offer) => offer.type === routePoint.type).offers;
+    }
   }
 
   getById(routePoint){
-    return this.getByType(routePoint).filter((offer) => routePoint.offers.includes(offer.id));
+    if(this.#offers.length !== 0){
+      return this.getByType(routePoint).filter((offer) => routePoint.offers.includes(offer.id));
+    }
   }
 
   getTypes(){
@@ -32,8 +36,9 @@ export default class OffersModel extends Observable{
       this.#offers = offers;
     } catch(err) {
       this.#offers = [];
+    } finally{
+      this._notify(UpdateType.INIT);
     }
-    this._notify(UpdateType.INIT);
   }
 
 }

@@ -1,8 +1,13 @@
-import {mockDestinations} from '../mock/destination.js';
+import {UpdateType} from '../const.js';
+import Observable from '../framework/observable.js';
+export default class DestinationsModel extends Observable{
+  #destinations = [];
+  #destinationsApiService = null;
 
-
-export default class DestinationsModel {
-  #destinations = mockDestinations;
+  constructor({destinationsApiService}) {
+    super();
+    this.#destinationsApiService = destinationsApiService;
+  }
 
   get destinations() {
     return this.#destinations;
@@ -18,6 +23,16 @@ export default class DestinationsModel {
 
   getCityNames(){
     return this.#destinations.map((item) => item.name);
+  }
+
+  async init() {
+    try {
+      const destinations = await this.#destinationsApiService.destinations;
+      this.#destinations = destinations;
+    } catch(err) {
+      this.#destinations = [];
+    }
+    this._notify(UpdateType.INIT);
   }
 
 }

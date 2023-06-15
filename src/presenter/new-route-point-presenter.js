@@ -52,15 +52,14 @@ export default class NewRoutePointPresenter {
   }
 
   #handleFormSubmit = (routePoint) => {
-    if(RoutePointsModel.isNotEmpty(routePoint)){
+    if(RoutePointsModel.isFilled(routePoint)){
       this.#handleDataChange(
         UserAction.ADD_ROUTEPOINT,
         UpdateType.MINOR,
         {id: nanoid(), ...routePoint},
       );
+      this.destroy();
     }
-    this.destroy();
-
   };
 
   #handleDeleteClick = () => {

@@ -70,7 +70,6 @@ export default class NewRoutePointPresenter {
   }
 
   #handleFormSubmit = (routePoint) => {
-    console.log(routePoint);
     if(RoutePointsModel.isFilled(routePoint)){
       this.#handleDataChange(
         UserAction.ADD_ROUTEPOINT,

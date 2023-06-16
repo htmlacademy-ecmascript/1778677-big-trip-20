@@ -13,7 +13,7 @@ import DestinationsApiService from './destinations-api-service.js';
 import OffersApiService from './offers-api-service.js';
 
 const AUTHORIZATION = 'Basic yS2sfS74ycl1sa2m';
-const END_POINT = 'https://20.ecmascript.pages.academy';
+const END_POINT = 'https://20.ecmascript.pages.academy/big-trip';
 
 const tripInfoContainter = document.querySelector('.trip-main');
 const filterContainer = document.querySelector('.trip-controls__filters');

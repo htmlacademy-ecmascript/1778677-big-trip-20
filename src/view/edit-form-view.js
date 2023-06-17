@@ -208,7 +208,6 @@ export default class EditFormView extends AbstractStatefulView {
   #typeChangeHandler = (evt) => {
     this.updateElement({
       type: evt.target.value,
-      offers: this.#offersModel ? this.#offersModel.offers : '',
     });
   };
 

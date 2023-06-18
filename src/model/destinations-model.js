@@ -31,8 +31,9 @@ export default class DestinationsModel extends Observable{
       this.#destinations = destinations;
     } catch(err) {
       this.#destinations = [];
+    } finally{
+      this._notify(UpdateType.INIT);
     }
-    this._notify(UpdateType.INIT);
   }
 
 }

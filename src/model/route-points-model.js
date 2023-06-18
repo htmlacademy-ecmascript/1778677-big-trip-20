@@ -20,8 +20,9 @@ export default class RoutePointsModel extends Observable{
       this.#routePoints = routePoints.map(this.#adaptToClient);
     } catch(err) {
       this.#routePoints = [];
+    } finally {
+      this._notify(UpdateType.INIT);
     }
-    this._notify(UpdateType.INIT);
   }
 
   async updateRoutePoint(updateType, update) {
@@ -44,28 +45,34 @@ export default class RoutePointsModel extends Observable{
     }
   }
 
-  addRoutePoint(updateType, update) {
-    this.#routePoints = [
-      update,
-      ...this.#routePoints,
-    ];
-
-    this._notify(updateType, update);
+  async addRoutePoint(updateType, update) {
+    try {
+      const response = await this.#routePointsApiService.addRoutePoint(update);
+      const newRoutePoint = this.#adaptToClient(response);
+      this.#routePoints = [newRoutePoint, ...this.#routePoints];
+      this._notify(updateType, newRoutePoint);
+    } catch(err) {
+      throw new Error('Can\'t add route point');
+    }
   }
 
-  deleteRoutePoint(updateType, update) {
+  async deleteRoutePoint(updateType, update) {
     const index = this.#routePoints.findIndex((routePoint) => routePoint.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t delete unexisting routePoint');
     }
 
-    this.#routePoints = [
-      ...this.#routePoints.slice(0, index),
-      ...this.#routePoints.slice(index + 1),
-    ];
-
-    this._notify(updateType);
+    try {
+      await this.#routePointsApiService.deleteRoutePoint(update);
+      this.#routePoints = [
+        ...this.#routePoints.slice(0, index),
+        ...this.#routePoints.slice(index + 1),
+      ];
+      this._notify(updateType);
+    } catch(err) {
+      throw new Error('Can\'t delete route point');
+    }
   }
 
   #adaptToClient(routePoint) {

@@ -7,7 +7,7 @@ const Method = {
 
 export default class OffersApiService extends ApiService {
   get offers() {
-    return this._load({url: 'big-trip/offers'})
+    return this._load({url: 'offers'})
       .then(ApiService.parseResponse);
   }
 

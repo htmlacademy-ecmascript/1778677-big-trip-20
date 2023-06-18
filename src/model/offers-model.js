@@ -15,13 +15,13 @@ export default class OffersModel extends Observable{
   }
 
   getByType(routePoint) {
-    if(this.#offers.length !== 0){
+    if(this.#offers.length){
       return this.#offers.find((offer) => offer.type === routePoint.type).offers;
     }
   }
 
   getById(routePoint){
-    if(this.#offers.length !== 0){
+    if(this.#offers.length){
       return this.getByType(routePoint).filter((offer) => routePoint.offers.includes(offer.id));
     }
   }

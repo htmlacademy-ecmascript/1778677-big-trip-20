@@ -184,7 +184,6 @@ export default class TripFormPresenter {
     }
   }
 
-
   #renderRoutePoints(){
     this.routePoints.forEach((routePoint) => this.#renderRoutePoint(routePoint));
   }

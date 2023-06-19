@@ -29,7 +29,8 @@ export default class NewRoutePointPresenter {
       destinationsModel: this.#destinationsModel,
       offersModel: this.#offersModel,
       onFormSubmit: this.#handleFormSubmit,
-      onDeleteClick: this.#handleDeleteClick
+      onFormCancel: this.#handleCancelClick,
+      isNewRoutePoint : true,
     });
 
     render(this.#routePointEditComponent, this.#routePointListContainer, RenderPosition.AFTERBEGIN);
@@ -79,7 +80,7 @@ export default class NewRoutePointPresenter {
     }
   };
 
-  #handleDeleteClick = () => {
+  #handleCancelClick = () => {
     this.destroy();
   };
 

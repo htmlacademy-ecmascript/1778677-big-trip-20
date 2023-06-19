@@ -57,6 +57,7 @@ export default class RoutePointPresenter {
       routePoint: this.#routePoint,
       offersModel: this.#offersModel,
       onFormSubmit: this.#handleFormSubmit,
+      onFormCancel: this.#handleFormCancel,
       onDeleteClick: this.#handleDeleteClick});
 
     if (prevRoutePointComponent === null || prevEditFormComponent === null) {
@@ -164,6 +165,11 @@ export default class RoutePointPresenter {
         UpdateType.MINOR,
         update, destination, offers, offersByType);
     }
+  };
+
+  #handleFormCancel = () => {
+    this.#editFormComponent.reset(this.#routePoint);
+    this.#replaceFormToRoutePoint();
   };
 
   #handleDeleteClick = (routePoint) => {

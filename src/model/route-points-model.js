@@ -20,6 +20,7 @@ export default class RoutePointsModel extends Observable{
       this.#routePoints = routePoints.map(this.#adaptToClient);
     } catch(err) {
       this.#routePoints = [];
+      this._notify(UpdateType.ERROR);
     } finally {
       this._notify(UpdateType.INIT);
     }

@@ -19,7 +19,7 @@ function createEditFormTemplate(routePoint, destination, offers, cityNames, offe
   function createEventTypeTemplate(types) {
     return types.map((typeItem) =>
       `<div class="event__type-item">
-       <input id="event-type-${typeItem.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeItem.toLowerCase()}"  ${isDisabled ? 'disabled' : ''}>
+       <input id="event-type-${typeItem.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeItem.toLowerCase()}" ${typeItem === type ? 'checked' : ''}>
        <label class="event__type-label  event__type-label--${typeItem.toLowerCase()}" for="event-type-${typeItem.toLowerCase()}-1">${capitalize(typeItem)}</label>
       </div>`).join('');
   }
@@ -45,7 +45,7 @@ function createEditFormTemplate(routePoint, destination, offers, cityNames, offe
        </div>`).join('');
   }
 
-  return `<li class="trip-events__item"><form class="event event--edit" action="#" method="post">
+  return (`<li class="trip-events__item"><form class="event event--edit" action="#" method="post">
   <header class="event__header">
     <div class="event__type-wrapper">
       <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -96,28 +96,30 @@ function createEditFormTemplate(routePoint, destination, offers, cityNames, offe
                   </button>`}
   </header>
   <section class="event__details">
-    <section class="event__section  event__section--offers">
+    ${offers?.length ? `<section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
       <div class="event__available-offers">
-      ${offers ? createOfferTemplate(offers) : ''}
+      ${createOfferTemplate(offers)}
       </div>
-    </section>
+    </section>` : ''}
 
-    <section class="event__section  event__section--destination">
+    ${destination ? `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${destination ? he.encode(destination.description) : ''}</p>
+      <p class="event__destination-description">${he.encode(destination.description)}</p>
 
       <div class="event__photos-container">
         <div class="event__photos-tape">
         ${destination ? createPictureTemplate(destination.pictures) : ''}
         </div>
       </div>
-    </section>
+    </section>` : ''}
   </section>
 </form>
-<li>`;
+<li>`
+  );
 }
+
 
 export default class EditFormView extends AbstractStatefulView {
   #destinationsModel = null;
@@ -163,7 +165,7 @@ export default class EditFormView extends AbstractStatefulView {
     this.element.querySelector('form').addEventListener('submit', this.#submitHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
-    this.element.querySelector('.event__available-offers').addEventListener('change', this.#offerSelectHandler);
+    this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#offerSelectHandler);
     this.element.querySelector('.event__field-group--price').addEventListener('change', this.#basePriceChangeHandler);
     if(!this.#isNewRoutePoint){
       this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
@@ -193,7 +195,6 @@ export default class EditFormView extends AbstractStatefulView {
       {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
-        minDate: this._state.dateFrom,
         maxDate: this._state.dateTo,
         defaultDate: this._state.dateFrom,
         onChange: this.#dateFromChangeHandler,

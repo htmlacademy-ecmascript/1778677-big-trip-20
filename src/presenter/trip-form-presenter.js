@@ -3,6 +3,7 @@ import NoRoutePointView from '../view/no-route-point-view.js';
 import SortView from '../view/sort-view.js';
 import BigTripView from '../view/big-trip-view.js';
 import LoadingView from '../view/loading-view.js';
+import ServerNotAvailibleView from '../view/server-not-avalible-view.js';
 import RoutePointPresenter from './route-point-presenter.js';
 import NewRoutePointPresenter from './new-route-point-presenter.js';
 import {render, RenderPosition, remove} from '../framework/render.js';
@@ -25,6 +26,7 @@ export default class TripFormPresenter {
 
   #routePointListComponent = new RoutePointListView();
   #loadingComponent = new LoadingView();
+  #serverNotAvailibleComponent = new ServerNotAvailibleView();
   #sortComponent = null;
   #noRoutePointComponent = null;
 
@@ -33,6 +35,7 @@ export default class TripFormPresenter {
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.EVERYTHING;
   #isLoading = true;
+  #isErrorMessage = false;
   #uiBlocker = new UiBlocker({
     lowerLimit: TimeLimit.LOWER_LIMIT,
     upperLimit: TimeLimit.UPPER_LIMIT
@@ -136,6 +139,11 @@ export default class TripFormPresenter {
         remove(this.#loadingComponent);
         this.#renderBigTrip();
         break;
+      case UpdateType.ERROR:
+        this.#isLoading = false;
+        remove(this.#loadingComponent);
+        this.#renderServerNotAvailibleMessage();
+        break;
     }
   };
 
@@ -160,11 +168,18 @@ export default class TripFormPresenter {
     render(this.#loadingComponent, this.#bigTripComponent.element, RenderPosition.AFTERBEGIN);
   }
 
+  #renderServerNotAvailibleMessage() {
+    this.#isErrorMessage = true;
+    render(this.#serverNotAvailibleComponent, this.#bigTripComponent.element, RenderPosition.AFTERBEGIN);
+  }
+
   #renderNoRoutePoints() {
     this.#noRoutePointComponent = new NoRoutePointView({
       filterType: this.#filterType
     });
-    render(this.#noRoutePointComponent, this.#bigTripComponent.element, RenderPosition.AFTERBEGIN);
+    if(!this.#isErrorMessage){
+      render(this.#noRoutePointComponent, this.#bigTripComponent.element, RenderPosition.AFTERBEGIN);
+    }
   }
 
   #clearTripForm({resetSortType = false} = {}) {
@@ -178,6 +193,9 @@ export default class TripFormPresenter {
 
     if (this.#noRoutePointComponent) {
       remove(this.#noRoutePointComponent);
+    }
+    if (this.#serverNotAvailibleComponent) {
+      remove(this.#serverNotAvailibleComponent);
     }
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT;

@@ -12,7 +12,7 @@ import RoutePointsApiService from './route-points-api-service.js';
 import DestinationsApiService from './destinations-api-service.js';
 import OffersApiService from './offers-api-service.js';
 
-const AUTHORIZATION = 'Basic yS2sfS74ycl1sa2m';
+const AUTHORIZATION = 'Basic yS2sfS74ycl2s32m';
 const END_POINT = 'https://20.ecmascript.pages.academy/big-trip';
 
 const tripInfoContainter = document.querySelector('.trip-main');

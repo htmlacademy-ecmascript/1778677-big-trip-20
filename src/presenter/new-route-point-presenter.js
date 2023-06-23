@@ -1,6 +1,7 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
 import EditFormView from '../view/edit-form-view.js';
 import {UserAction, UpdateType} from '../const.js';
+import {isEscapeKey} from '../utils/common.js';
 import RoutePointsModel from '../model/route-points-model.js';
 
 export default class NewRoutePointPresenter {
@@ -35,7 +36,7 @@ export default class NewRoutePointPresenter {
 
     render(this.#routePointEditComponent, this.#routePointListContainer, RenderPosition.AFTERBEGIN);
 
-    document.addEventListener('keydown', this.#escKeyDownHandler);
+    document.addEventListener('keydown', this.#documentEscKeyDownHandler);
   }
 
   destroy() {
@@ -48,7 +49,7 @@ export default class NewRoutePointPresenter {
     remove(this.#routePointEditComponent);
     this.#routePointEditComponent = null;
 
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    document.removeEventListener('keydown', this.#documentEscKeyDownHandler);
   }
 
   setSaving() {
@@ -84,8 +85,8 @@ export default class NewRoutePointPresenter {
     this.destroy();
   };
 
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
+  #documentEscKeyDownHandler = (evt) => {
+    if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.destroy();
     }

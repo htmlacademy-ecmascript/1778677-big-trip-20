@@ -11,11 +11,9 @@ const MSEC_IN_HOUR = MSEC_IN_SEC * SEC_IN_MIN * MIN_IN_HOUR;
 const MSEC_IN_DAY = MSEC_IN_HOUR * HOUR_IN_DAY;
 
 
-function humanizeDate(date, dateFormat) {
-  return date ? dayjs(date).format(dateFormat) : '';
-}
+const humanizeDate = (date, dateFormat) => date ? dayjs(date).format(dateFormat) : '';
 
-function getTimeDiff(timeFrom, timeTo) {
+const getTimeDiff = (timeFrom, timeTo) => {
   const timeDiff = dayjs(timeTo).diff(timeFrom);
 
   let routePointDuration = 0;
@@ -33,20 +31,15 @@ function getTimeDiff(timeFrom, timeTo) {
   }
 
   return routePointDuration;
-}
+};
+
 const getDatesDiff = (dateFrom, dateTo, timeUnit) => timeUnit ? dayjs(dateTo).diff(dayjs(dateFrom), timeUnit) : dayjs(dateTo).diff(dayjs(dateFrom));
 
-function isRoutePointFuture(routePoint){
-  return (dayjs().isBefore(routePoint.dateFrom));
-}
+const isRoutePointFuture = (routePoint) => dayjs().isBefore(routePoint.dateFrom);
 
-function isRoutePointPast(routePoint){
-  return (dayjs().isAfter(routePoint.dateTo));
-}
+const isRoutePointPast = (routePoint) => dayjs().isAfter(routePoint.dateTo);
 
-function isRoutePointPresent(routePoint){
-  return (dayjs().isAfter(routePoint.dateFrom) && dayjs().isBefore(routePoint.dateTo));
-}
+const isRoutePointPresent = (routePoint) => dayjs().isAfter(routePoint.dateFrom) && dayjs().isBefore(routePoint.dateTo);
 
 const sortByDay = (routePointA, routePointB) => {
   const dateA = dayjs(routePointA.dateFrom);
@@ -61,4 +54,7 @@ const sortByDurationTime = (routePointA, routePointB) => getDatesDiff(routePoint
 
 const sortByPrice = (routePointA, routePointB) => routePointB.basePrice - routePointA.basePrice;
 
-export {humanizeDate, getTimeDiff, isRoutePointFuture, isRoutePointPast, isRoutePointPresent, sortByDay, sortByDurationTime, sortByPrice};
+const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) || dayjs(dateA).isSame(dateB, 'D');
+
+
+export {humanizeDate, getTimeDiff, isRoutePointFuture, isRoutePointPast, isRoutePointPresent, sortByDay, sortByDurationTime, sortByPrice, isDatesEqual};

@@ -57,7 +57,6 @@ export default class RoutePointsApiService extends ApiService {
       'is_favorite': routePoint.isFavorite,
     };
 
-    // Ненужные ключи мы удаляем
     delete adaptedRoutePoint.basePrice;
     delete adaptedRoutePoint.dateFrom;
     delete adaptedRoutePoint.dateTo;

@@ -38,6 +38,7 @@ export default class OffersModel extends Observable{
       this.#offers = [];
       this._notify(UpdateType.ERROR);
     } finally{
+      this._notify(UpdateType.OFFERS);
       this._notify(UpdateType.INIT);
     }
   }

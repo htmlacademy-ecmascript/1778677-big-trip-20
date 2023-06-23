@@ -1,4 +1,4 @@
-const EMPTY_ROUTEPOINT = {
+const EMPTY_ROUTE_POINT = {
   id: '',
   basePrice: 0,
   dateFrom: null,
@@ -34,7 +34,17 @@ const UpdateType = {
   MAJOR: 'MAJOR',
   INIT: 'INIT',
   ERROR: 'ERROR',
+  DESTINATIONS: 'DESTINATIONS',
+  OFFERS:'OFFERS',
+  ROUTEPOINTS: 'ROUTEPOINTS',
 };
 
-export { EMPTY_ROUTEPOINT, FilterType, SortType, UserAction, UpdateType };
+const FormatPattern = {
+  TRIP_INFO_DATE: 'D MMM',
+  DATE: 'MMM D',
+  TIME: 'HH:mm',
+  DATETIME: 'DD/MM/YY HH:mm',
+};
+
+export { EMPTY_ROUTE_POINT, FilterType, SortType, UserAction, UpdateType, FormatPattern };
 

@@ -1,6 +1,6 @@
 import he from 'he';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { EMPTY_ROUTEPOINT } from '../const.js';
+import { EMPTY_ROUTE_POINT } from '../const.js';
 import {humanizeDate} from '../utils/route-point-utils.js';
 import {capitalize} from '../utils/common.js';
 import flatpickr from 'flatpickr';
@@ -130,7 +130,7 @@ export default class EditFormView extends AbstractStatefulView {
   #datepicker = null;
   #isNewRoutePoint = false;
 
-  constructor({destinationsModel, routePoint = EMPTY_ROUTEPOINT, offersModel, onFormSubmit, onFormCancel, onDeleteClick, isNewRoutePoint = false}) {
+  constructor({destinationsModel, routePoint = EMPTY_ROUTE_POINT, offersModel, onFormSubmit, onFormCancel, onDeleteClick, isNewRoutePoint = false}) {
     super();
     this.#destinationsModel = destinationsModel;
     this._setState(EditFormView.parseRoutePointToState(routePoint));
@@ -166,7 +166,7 @@ export default class EditFormView extends AbstractStatefulView {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#typeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#offerSelectHandler);
-    this.element.querySelector('.event__field-group--price').addEventListener('change', this.#basePriceChangeHandler);
+    this.element.querySelector('.event__input--price').addEventListener('change', this.#basePriceChangeHandler);
     if(!this.#isNewRoutePoint){
       this.element.querySelector('.event__reset-btn').addEventListener('click', this.#formDeleteClickHandler);
       this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formCancelClickHandler);

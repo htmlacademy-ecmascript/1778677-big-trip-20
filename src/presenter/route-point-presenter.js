@@ -2,6 +2,9 @@ import {render, replace, remove} from '../framework/render.js';
 import RoutePointView from '../view/route-point-view.js';
 import EditFormView from '../view/edit-form-view.js';
 import {UserAction, UpdateType} from '../const.js';
+import {isEscapeKey} from '../utils/common.js';
+import {isDatesEqual} from '../utils/route-point-utils.js';
+import {isPricesEqual} from '../utils/common.js';
 import RoutePointsModel from '../model/route-points-model.js';
 
 const Mode = {
@@ -81,6 +84,7 @@ export default class RoutePointPresenter {
   destroy() {
     remove(this.#routePointComponent);
     remove(this.#editFormComponent);
+    document.removeEventListener('keydown', this.#documentEscKeyDownHandler);
   }
 
   resetView() {
@@ -127,23 +131,23 @@ export default class RoutePointPresenter {
 
   #replaceRoutePointToForm() {
     replace(this.#editFormComponent, this.#routePointComponent);
-    document.addEventListener('keydown', this.#escKeyDownHandler);
+    document.addEventListener('keydown', this.#documentEscKeyDownHandler);
     this.#handleModeChange();
     this.#mode = Mode.EDITING;
   }
 
   #replaceFormToRoutePoint() {
     replace(this.#routePointComponent, this.#editFormComponent);
-    document.removeEventListener('keydown', this.#escKeyDownHandler);
+    document.removeEventListener('keydown', this.#documentEscKeyDownHandler);
     this.#mode = Mode.DEFAULT;
   }
 
-  #escKeyDownHandler = (evt) => {
-    if (evt.key === 'Escape') {
+  #documentEscKeyDownHandler = (evt) => {
+    if (isEscapeKey(evt)) {
       evt.preventDefault();
       this.#editFormComponent.reset(this.#routePoint);
       this.#replaceFormToRoutePoint();
-      document.removeEventListener('keydown', this.#escKeyDownHandler);
+      document.removeEventListener('keydown', this.#documentEscKeyDownHandler);
     }
   };
 
@@ -159,10 +163,14 @@ export default class RoutePointPresenter {
   };
 
   #handleFormSubmit = (update, destination, offers, offersByType) =>{
+    const isMinorUpdate = !isDatesEqual(this.#routePoint.dateFrom, update.dateFrom)
+    || !isPricesEqual(this.#routePoint.basePrice, update.basePrice);
+
     if(RoutePointsModel.isFilled(update)){
       this.#handleDataChange(
         UserAction.UPDATE_ROUTEPOINT,
-        UpdateType.MINOR,
+        !isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+
         update, destination, offers, offersByType);
     }
   };
